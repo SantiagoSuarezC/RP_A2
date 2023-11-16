@@ -1,0 +1,2 @@
+-Darlle unha volta o de empty(X,Y,"."), igual é innecesario telo
+-Facer que funcione a basura do show.bat

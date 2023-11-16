@@ -6,9 +6,9 @@ block_cell(X,Y) :- numbered_cell(X,Y).
 % Define numbered cells
 numbered_cell(X,Y) :- cell(X,Y,N), N >= 0, N <= 4.
 % Define empty cells
-cell(X,Y,".") :- coords(X,Y), not block_cell(X,Y).
+empty(X,Y,".") :- coords(X,Y), not block_cell(X,Y).
 %   bulb can only be at places too light up but we don't know how many we need
-{ bulb(X,Y) : cell(X,Y,".") }.
+{ bulb(X,Y) : empty(X,Y,".") }.
 
 % 1. "No 2 Bulbs can shine on each other"
 
@@ -37,8 +37,8 @@ error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB!=YB1.
 %   all coords that are lighted
 lighted_coords (X,Y) :- lights(_,_,X,Y).
 %   checking if all board is lit up
-:- lighted_coords(X,Y), not cell(X,Y,".").
-:- not lighted_coords(X,Y), cell(X,Y,".").
+:- lighted_coords(X,Y), not empty(X,Y,".").
+:- not lighted_coords(X,Y), empty(X,Y,".").
 
 % 4. "Neighbour thingy"
 %   XBlock, YBlock has neighbour XBulb, YBulb.
