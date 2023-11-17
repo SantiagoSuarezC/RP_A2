@@ -1,7 +1,7 @@
 
--Facer que funcione a basura do show.bat; o problema creo que é que o viz-lightup.lp espera que veña en "Values" da primeira
-parte do ejecutable "clingo lightup.lp domain.lp --outf=2" (se ejecutas esa linea na terminal ves xa qué da) unha variable
-que se chama pos((X,Y)) na que se especifican todas as celdas do problema; tentei creala de distintas maneiras no lightup.lp
-pero non dou feito polo tema dos dous parénteses.
+-Estaba probando con algo tipo:
+pos((A,B)) :- A=n-1-Y, B=X, coords((X,Y)).
+cell(A,B,N) :- cells(X,Y,N), pos((A,B))
+Para rotar a merda esa.
 
 -Darlle unha volta o de empty(X,Y,"."), igual é innecesario telo, e en general optimizar todo unha vez vaia maiado
