@@ -1,12 +1,13 @@
 import sys
 
-i=0
-for line in sys.stdin:
-    j=0
-    for c in line:
-       if c=='x' or c=='b' or (c>='0' and c<='4'):
-         print(f"cell({i},{j},{c}).") 
-       j=j+1
-    i=i+1
-print(f"dim({i}).")
-print(f"#const n={i}.")
+lineas = list(sys.stdin)
+total_de_filas = len(lineas)
+
+for i, line in enumerate(lineas):
+    j = total_de_filas - i - 1
+    for k, c in enumerate(line.strip()):
+        if c in ['x', 'b', '0', '1', '2', '3', '4']:
+            print(f"cell({k},{j},{c}).")
+
+print(f"dim({total_de_filas}).")
+print(f"#const n={total_de_filas}.")
