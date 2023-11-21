@@ -9,12 +9,12 @@ block_cell(X,Y) :- numbered_cell(X,Y).
 numbered_cell(X,Y) :- cell(X,Y,N), N >= 0, N <= 4.
 
 % Define empty cells (white cells without a number or 'x')
-empty_cell(X,Y,".") :- pos((X,Y)), not block_cell(X,Y).
+empty_cell(X,Y) :- pos((X,Y)), not block_cell(X,Y).
 
 % Bulb Placement Rules
 % -----------------------------------------------------------------------------------
 % Bulbs can be placed in any empty cell
-{ bulb(X,Y) : empty_cell(X,Y,".") }.
+{ bulb(X,Y) : empty_cell(X,Y) }.
 
 % Lighting Mechanics: How Bulbs Illuminate Cells
 % -----------------------------------------------------------------------------------
@@ -36,8 +36,8 @@ lights(XB,YB,X,Y) :- illuminate_row(XB,YB,X,Y).
 % -----------------------------------------------------------------------------------
 % Rule 1: All white cells must be lighted up by some bulb
 %   checking if all board is lit up
-:- lights(_,_,X,Y), not empty_cell(X,Y,".").
-:- not lights(_,_,X,Y), empty_cell(X,Y,".").
+:- lights(_,_,X,Y), not empty_cell(X,Y).
+:- not lights(_,_,X,Y), empty_cell(X,Y).
 
 % Rule 2: A light bulb cannot send a light ray on another bulb
 :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB=XB1, YB!=YB1.

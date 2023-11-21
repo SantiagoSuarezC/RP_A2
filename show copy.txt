@@ -1,2 +1,0 @@
-python3 encode_original.py < dom01.txt > domain_original.lp
-clingo lightup_workswithoriginal.lp domain_original.lp --outf=2 | clingraph  --view --dir='out/lightout_original' --format=png --out=render --engine=neato --viz-encoding=viz-lightup_workswithoriginal.lp
