@@ -1,0 +1,71 @@
+
+#Cambiar nomenclatura
+
+#Definición de todas las posiciones de la cuadrícula:
+pos((X, Y)) :- X=0..n-1, Y=0..n-1.
+
+
+###### Podríamos unificar ambas
+#Definición de las celdas con bloque sin número:
+block_cell(X,Y) :- cell(X,Y,x).
+#Definición de las celdas con bloque con cualquier número (norma recurrente):
+block_cell(X,Y) :- numbered_cell(X,Y).
+numbered_cell(X,Y) :- cell(X,Y,N), N >= 0, N <= 4.
+
+#####Podríamos meterlo en la def anterior?
+#Definimos celdas vacías como todas aquellas que pertenecen a la cuadrícula y no tienen bloque:
+empty_cell(X,Y,".") :- pos((X,Y)), not block_cell(X,Y).
+
+
+The rules for placing the bulbs are the following:
+All white cells must be lighted up by some bulb
+A light bulb cannot send a light ray on another bulb
+If a black cell contains a number N, then the number of bulb cells that share an edge with the black cell must be exactly N.
+
+#Abrimos la posibilidad a colocar una bombilla en cada celda vacía:
+{ bulb(X,Y) : empty_cell(X,Y,".") }.
+
+#El predicado iluminar_fila es cierto cuando hay una bombilla en una posicion de la misma.
+#Recursivamente definimos que en esa fila el predicado será cierto si no nos encontramos con
+# un bloque. Hacemos lo mismo para las columnas. Finalmente definimos que el predicado
+#lights será cierto cuando lo sean iluminar filas o columnas, por simplicidad en el futuro.
+illuminate_row(XB,YB,X,Y) :- bulb(XB,YB), X = XB, Y = YB.
+illuminate_column(XB,YB,X,Y) :- bulb(XB,YB), X = XB, Y = YB.
+illuminate_row(XB,YB,X,Y) :- illuminate_row(XB,YB, X1,Y), X = X1 + 1, X < n, not block_cell(X,Y).
+illuminate_row(XB,YB,X,Y) :- illuminate_row(XB,YB, X1,Y), X = X1 - 1, X >= 0, not block_cell(X,Y).
+illuminate_column(XB,YB,X,Y) :- illuminate_column(XB,YB, X,Y1), Y = Y1 + 1, Y < n, not block_cell(X,Y).
+illuminate_column(XB,YB,X,Y) :- illuminate_column(XB,YB, X,Y1), Y = Y1 - 1, Y >= 0, not block_cell(X,Y).
+lights(XB,YB,X,Y) :- illuminate_column(XB,YB,X,Y).
+lights(XB,YB,X,Y) :- illuminate_row(XB,YB,X,Y).
+
+
+##Quizás no haya que crear illuminated y baste con usar lights.
+# No se si es necesario lo de checkear si está iluminado & no esta vacia
+# dado que eso no debería ser posible en nuestra definicion
+illuminated (X,Y) :- lights(_,_,X,Y).
+:- illuminated(X,Y), not empty_cell(X,Y,".").
+:- not illuminated(X,Y), empty_cell(X,Y,".").
+
+#Sencillamente checkeamos si una bombilla alumbra sobre otra
+conflict(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB=XB1, YB!=YB1.
+conflict(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB=YB1.
+conflict(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB!=YB1.
+:- not 0{conflict(X,Y)}0.
+
+#No tendría mas sentido usar directamente numbered_cell ya que sólo afecta a estas?
+#Usar una llave o así para no tener que repetir para todos
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block_cell(XBlock, YBlock),bulb(XBulb,YBulb), XBlock + 1 = XBulb, YBlock = YBulb, XBulb < n.
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block_cell(XBlock,YBlock),bulb(XBulb,YBulb), XBlock - 1 = XBulb, YBlock = YBulb, XBulb >= 0.
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block_cell(XBlock,YBlock),bulb(XBulb,YBulb), XBlock = XBulb, YBlock + 1 = YBulb, YBulb < n.
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block_cell(XBlock,YBlock),bulb(XBulb,YBulb), XBlock = XBulb, YBlock - 1 = YBulb, YBulb >= 0.
+count_neighbour_bulbs(XBl, YBl, N) :- block_cell(XBl, YBl), #count{ XBulb, YBulb : neighbours(XBl, YBl, XBulb, YBulb) } = N.
+:- count_neighbour_bulbs(X, Y, N1), numbered_cell(X, Y), cell(X, Y, N2), N1 != N2.
+
+% Output Formatting
+% -----------------------------------------------------------------------------------
+% Bulb cell definition
+cell(X, Y, b) :- bulb(X, Y).
+
+% Output variables
+#show pos/1.
+#show cell/3.
