@@ -1,7 +1,0 @@
-
--Estaba probando con algo tipo:
-pos((A,B)) :- A=n-1-Y, B=X, coords((X,Y)).
-cell(A,B,N) :- cells(X,Y,N), pos((A,B))
-Para rotar a merda esa.
-
--Darlle unha volta o de empty(X,Y,"."), igual é innecesario telo, e en general optimizar todo unha vez vaia maiado
