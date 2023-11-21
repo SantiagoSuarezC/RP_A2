@@ -9,12 +9,12 @@ block_cell(X,Y) :- numbered_cell(X,Y).
 numbered_cell(X,Y) :- cell(X,Y,N), N >= 0, N <= 4.
 
 % Define empty cells (white cells without a number or 'x')
-empty_cell(X,Y,".") :- pos((X,Y)), not block_cell(X,Y).
+empty_cell(X,Y) :- pos((X,Y)), not block_cell(X,Y).
 
 % Bulb Placement Rules
 % -----------------------------------------------------------------------------------
 % Bulbs can be placed in any empty cell
-{ bulb(X,Y) : empty_cell(X,Y,".") }.
+{ bulb(X,Y) : empty_cell(X,Y) }.
 
 % Lighting Mechanics: How Bulbs Illuminate Cells
 % -----------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ lights(Xbulb,Ybulb,X,Y) :- illuminate_row(Xbulb,Ybulb,X,Y).
 % Rule 1: All white cells must be lighted up by some bulb
 illuminated (X,Y) :- lights(_,_,X,Y).
 %   checking if all board is lit up
-:- illuminated(X,Y), not empty_cell(X,Y,".").
-:- not illuminated(X,Y), empty_cell(X,Y,".").
+:- illuminated(X,Y), not empty_cell(X,Y).
+:- not illuminated(X,Y), empty_cell(X,Y).
 
 % Rule 2: A light bulb cannot send a light ray on another bulb
 conflict(X,Y) :- lights(Xbulb1,Ybulb1,X,Y), bulb(Xbulb2,Ybulb2), X=Xbulb2, Y=Ybulb2, Xbulb1=Xbulb2, Ybulb1!=Ybulb2.
@@ -47,10 +47,29 @@ conflict(X,Y) :- lights(Xbulb1,Ybulb1,X,Y), bulb(Xbulb2,Ybulb2), X=Xbulb2, Y=Ybu
 :- not 0{conflict(X,Y)}0.
 
 % Rule 3: Number in black cell must match the count of neighboring bulbs
-neighbours(XBlock,YBlock,Xbulb,Ybulb) :- block_cell(XBlock, YBlock),bulb(Xbulb,Ybulb), XBlock + 1 = Xbulb, YBlock = Ybulb, Xbulb < n.
-neighbours(XBlock,YBlock,Xbulb,Ybulb) :- block_cell(XBlock,YBlock),bulb(Xbulb,Ybulb), XBlock - 1 = Xbulb, YBlock = Ybulb, Xbulb >= 0.
-neighbours(XBlock,YBlock,Xbulb,Ybulb) :- block_cell(XBlock,YBlock),bulb(Xbulb,Ybulb), XBlock = Xbulb, YBlock + 1 = Ybulb, Ybulb < n.
-neighbours(XBlock,YBlock,Xbulb,Ybulb) :- block_cell(XBlock,YBlock),bulb(Xbulb,Ybulb), XBlock = Xbulb, YBlock - 1 = Ybulb, Ybulb >= 0.
+neighbours(Xblock,Yblock,Xbulb,Ybulb) :- 
+    block_cell(Xblock, Yblock),bulb(Xbulb,Ybulb), 
+    Xblock + 1 = Xbulb, 
+    Yblock = Ybulb, 
+    Xbulb < n.
+neighbours(Xblock,Yblock,Xbulb,Ybulb) :- 
+    block_cell(Xblock,Yblock),
+    bulb(Xbulb,Ybulb), 
+    Xblock - 1 = Xbulb, 
+    Yblock = Ybulb, 
+    Xbulb >= 0.
+neighbours(Xblock,Yblock,Xbulb,Ybulb) :- 
+    block_cell(Xblock,Yblock),
+    bulb(Xbulb,Ybulb), 
+    Xblock = Xbulb, 
+    Yblock + 1 = Ybulb, 
+    Ybulb < n.
+neighbours(Xblock,Yblock,Xbulb,Ybulb) :- 
+    block_cell(Xblock,Yblock),
+    bulb(Xbulb,Ybulb), 
+    Xblock = Xbulb, 
+    Yblock - 1 = Ybulb, 
+    Ybulb >= 0.
 count_neighbour_bulbs(XBl, YBl, N) :- block_cell(XBl, YBl), #count{ Xbulb, Ybulb : neighbours(XBl, YBl, Xbulb, Ybulb) } = N.
 :- count_neighbour_bulbs(X, Y, N1), numbered_cell(X, Y), cell(X, Y, N2), N1 != N2.
 
