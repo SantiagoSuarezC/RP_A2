@@ -1,3 +1,5 @@
+%Created by: Fernando Nunez Sanchez, Santiago Suarez Carrera.
+
 % Game Setup: Definition of Grid and Cell Types
 % -----------------------------------------------------------------------------------
 % Define all positions for the grid

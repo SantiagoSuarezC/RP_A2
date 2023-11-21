@@ -1,3 +1,5 @@
+#Modified by: Fernando Nunez Sanchez, Santiago Suarez Carrera.
+
 import sys
 
 lineas = list(sys.stdin)
